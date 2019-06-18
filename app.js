@@ -30,68 +30,22 @@ var MarketingItem = function (name, imageSrc) {
 //hold all marketing items after being constructed
 MarketingItem.allImages = [];
 
-//BEGIN HTML WRITE CODE
-// Referencing the container for the DOM
-function domReferenceParent(parent){
-  var node = document.getElementById(parent);
-  return node;
-}
-
-// build a new element to put on the page
-function buildElement(element){
-  var node = document.createElement(element);
-  return node;
-}
-
-// give element some text
-function assignElementText(text, element){
-  element.textContent = text;
-}
-
-// append child to page
-function appendChildtoParent(parent, child){
-  parent.appendChild(child);
-}
-
-//build an element, assign it text, and append to page
-function htmlTextHack(element, text, parentID){
-  var node = domReferenceParent(parentID);
-  var current = buildElement(element);
-  assignElementText(text, current);
-  appendChildtoParent(node, current);
-}
-
-// build an element without text, append.
-function htmlNodeAdd(element, parentID){
-  var node = domReferenceParent(parentID);
-  var current = buildElement(element);
-  appendChildtoParent(node, current);
-}
-
 var displayResults = function () {
   //header description
+  // eslint-disable-next-line no-undef
   htmlTextHack('li', 'name, clicks, shown', 'clickData');
-
   //iterate over objects
   for (var i = 0; i < MarketingItem.allImages.length ; i++ ) {
     var name = MarketingItem.allImages[i].name;
     var clicks = MarketingItem.allImages[i].clicks;
     var shown = MarketingItem.allImages[i].timesShown;
-
+    //create output
     var output = name + ', ' + clicks + ', ' + shown;
-
+    // eslint-disable-next-line no-undef
     htmlTextHack('li', output, 'clickData');
   }
-  //grab name, shown, clicked,
-
-  //create li and output
-
-
 };
-
-
-
-//END HTML WRITE CODE
+// //END HTML WRITE CODE
 
 //render three new images from the url
 var renderNewImage = function (leftIndex, centerIndex, rightIndex){
@@ -124,12 +78,8 @@ var pickItemFromArray = function(){
     var leftIndex = getRandomInt(0, MarketingItem.allImages.length-1);
     var centerIndex = getRandomInt(0, MarketingItem.allImages.length-1);
     var rightIndex = getRandomInt(0, MarketingItem.allImages.length-1);
-
-    
-
-    //channge this
+    //check previous selections, if any were preivously selected do it again.
     var repeat = checkPrevious(leftIndex, centerIndex, rightIndex );
-    console.log('i\'m  in the do of pickItemFromArray and i\'m still alive');
     //continue until left, right, and center are not the same.
   } while (leftIndex === rightIndex || centerIndex === leftIndex || centerIndex === rightIndex || repeat);
 
@@ -157,11 +107,9 @@ var handleClickOnMarketing = function(event){
       if(id === 'leftPanel'){
         leftImageOnPage.clicks++;
       }
-
       if(id === 'centerPanel'){
         centerImageOnPage.clicks++;
       }
-
       if(id === 'rightPanel'){
         rightImageOnPage.clicks++;
       }
@@ -170,7 +118,6 @@ var handleClickOnMarketing = function(event){
       leftImageOnPage.timesShown++;
       centerImageOnPage.timesShown++;
       rightImageOnPage.timesShown++;
-
       //choose new merchendise
       pickItemFromArray();
     }
@@ -181,7 +128,6 @@ var handleClickOnMarketing = function(event){
   //when they reach total max clicks, remove the event listener
   if(totalClicks === allowedClicks){
     panelSectionTag.removeEventListener('click', handleClickOnMarketing);
-
     //TODO: add a innerhtml to empty string here to reset.
     //call our function to display results here
     displayResults();
@@ -191,6 +137,7 @@ var handleClickOnMarketing = function(event){
 //add event listener
 panelSectionTag.addEventListener('click', handleClickOnMarketing);
 
+//TODO: read data from a file.
 // Create Image objects
 new MarketingItem('bag', './assets/bag.jpg');
 new MarketingItem('banana', './assets/banana.jpg');
