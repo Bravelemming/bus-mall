@@ -30,81 +30,62 @@ var MarketingItem = function (name, imageSrc) {
 //hold all marketing items after being constructed
 MarketingItem.allImages = [];
 
-//BEGIN HTML WRITE CODE
-// Referencing the container for the DOM
-function domReferenceParent(parent){
-  var node = document.getElementById(parent);
-  return node;
-}
+//chart creation
+function makeChart(id) {
+  var chartId = document.getElementById(id);
+  var percents = [];
+  var names = [];
+  var colors = [];
+  var borders = [];
 
-// build a new element to put on the page
-function buildElement(element){
-  var node = document.createElement(element);
-  return node;
-}
-
-// give element some text
-function assignElementText(text, element){
-  element.textContent = text;
-}
-
-// append child to page
-function appendChildtoParent(parent, child){
-  parent.appendChild(child);
-}
-
-//build an element, assign it text, and append to page
-function htmlTextHack(element, text, parentID){
-  var node = domReferenceParent(parentID);
-  var current = buildElement(element);
-  assignElementText(text, current);
-  appendChildtoParent(node, current);
-}
-
-// build an element without text, append.
-function htmlNodeAdd(element, parentID){
-  var node = domReferenceParent(parentID);
-  var current = buildElement(element);
-  appendChildtoParent(node, current);
-}
-
-var displayResults = function () {
-  //header description
-  htmlTextHack('li', 'name, clicks, shown', 'clickData');
-
-  //iterate over objects
-  for (var i = 0; i < MarketingItem.allImages.length ; i++ ) {
-    var name = MarketingItem.allImages[i].name;
-    var clicks = MarketingItem.allImages[i].clicks;
-    var shown = MarketingItem.allImages[i].timesShown;
-
-    var output = name + ', ' + clicks + ', ' + shown;
-
-    htmlTextHack('li', output, 'clickData');
+  for (var i = 0; i < MarketingItem.allImages.length; i++) {
+    //create percentage
+    var p = Math.round(MarketingItem.allImages[i].clicks / MarketingItem.allImages[i].timesShown * 100);
+    //divide by zero, set to 0
+    if ( isNaN(p) ){
+      p = 0;
+    }
+    console.log('P: ', p);
+    //save names and percents and colors
+    percents.push( p );
+    names.push( MarketingItem.allImages[i].name );
+    colors.push( random_rgba() );
+    borders.push( random_rgba() );
   }
-  //grab name, shown, clicked,
 
-  //create li and output
-
-
-};
-
-
-
-//END HTML WRITE CODE
+  var chartData = {
+    labels: names,
+    datasets: [{
+      label: '# of Votes',
+      data: percents,
+      backgroundColor: colors,
+      borderColor: borders,
+      borderWidth: 5
+    }]
+  };//end chartData
+  var chartObject = {
+    type: 'doughnut',
+    data : chartData,
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        yAxes: [{
+          ticks: {
+            beginAtZero: true
+          }
+        }]
+      }
+    }
+  };//end chartObject
+  var busChart = new Chart(chartId, chartObject);
+}//end CHART
 
 //render three new images from the url
 var renderNewImage = function (leftIndex, centerIndex, rightIndex){
   leftImageTag.src = MarketingItem.allImages[leftIndex].url;
   centerImageTag.src = MarketingItem.allImages[centerIndex].url;
   rightImageTag.src = MarketingItem.allImages[rightIndex].url;
-};
-
-//from MDN, inclusive range with uniform distribution
-var getRandomInt = function(min, max) {
-  min = Math.ceil(min);
-  max = Math.floor(max);
-  return Math.floor(Math.random() * (max - min + 1)) + min;
 };
 
 //check values against previous values in last panel.
@@ -124,12 +105,8 @@ var pickItemFromArray = function(){
     var leftIndex = getRandomInt(0, MarketingItem.allImages.length-1);
     var centerIndex = getRandomInt(0, MarketingItem.allImages.length-1);
     var rightIndex = getRandomInt(0, MarketingItem.allImages.length-1);
-
-    
-
-    //channge this
+    //check previous selections, if any were preivously selected do it again.
     var repeat = checkPrevious(leftIndex, centerIndex, rightIndex );
-    console.log('i\'m  in the do of pickItemFromArray and i\'m still alive');
     //continue until left, right, and center are not the same.
   } while (leftIndex === rightIndex || centerIndex === leftIndex || centerIndex === rightIndex || repeat);
 
@@ -157,11 +134,9 @@ var handleClickOnMarketing = function(event){
       if(id === 'leftPanel'){
         leftImageOnPage.clicks++;
       }
-
       if(id === 'centerPanel'){
         centerImageOnPage.clicks++;
       }
-
       if(id === 'rightPanel'){
         rightImageOnPage.clicks++;
       }
@@ -170,12 +145,12 @@ var handleClickOnMarketing = function(event){
       leftImageOnPage.timesShown++;
       centerImageOnPage.timesShown++;
       rightImageOnPage.timesShown++;
-
-      //choose new merchendise
+      //choose new pictures
       pickItemFromArray();
     }
   }//end total clicks check
 
+  //TODO: add an else here to remove the event listener and display results.  maybe keep generating a new model each time?
   // increment amount of clicks
   totalClicks++;
   //when they reach total max clicks, remove the event listener
@@ -183,14 +158,18 @@ var handleClickOnMarketing = function(event){
     panelSectionTag.removeEventListener('click', handleClickOnMarketing);
 
     //TODO: add a innerhtml to empty string here to reset.
+
     //call our function to display results here
-    displayResults();
+    //displayResults();
+    makeChart('myChart');
+
   }
 };
 
 //add event listener
 panelSectionTag.addEventListener('click', handleClickOnMarketing);
 
+//TODO: read data from a file.
 // Create Image objects
 new MarketingItem('bag', './assets/bag.jpg');
 new MarketingItem('banana', './assets/banana.jpg');
@@ -215,3 +194,5 @@ new MarketingItem('wine-glass', './assets/wine-glass.jpg');
 
 //initial call to populate panels
 pickItemFromArray();
+
+
