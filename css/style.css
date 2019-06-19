@@ -1,6 +1,7 @@
 body {
   background-color: #9AC4E3;
 }
+
 main{
   width: 100%;
 }
@@ -11,9 +12,7 @@ nav {
   height: 40px;
   margin: auto;
   background-color: #164958;
-  /* margin-bottom: 5px; */
   padding-top: 15px;
-  /* border-bottom: 1px solid black; */
 }
 
 nav > ul {
@@ -35,36 +34,54 @@ nav > ul > li > a {
   font-weight: bolder;
   color: #EA502B  ;
   text-decoration: none;
+  transition: 2s;
 }
 
+nav > ul > li > a:hover {
+  box-shadow: 10px 10px grey;
+}
+/* END NAV */
 
+/* BEGIN PANELS */
 #panelOfChoices > h3, #panelOfChoices > h4 {
   background-color: #49C0CF;
   text-align: center;
+  font-size: 1.1em;
+  font-weight: bold;
 }
 
 #panelOfChoices {
   display: inline-block;
-  margin: 0 auto;
+  margin: auto;
   width: 100%;
+  padding-bottom: 20px;
 }
 
 #panelOfChoices > div {
-  height: 32%;
-  width: 32%;
+  height: 40%;
+  width: 25%;
   padding: 2px;
   display: inline-block;
+  margin: auto;
+  padding-left: 7%;
+  padding-top: 20px;
 
 }
+
 #panelOfChoices > div > img{
-  padding-top: 20px;
-  padding-bottom: 20px;
   height: 200px;
   width: 200px;
   margin: auto;
+  transition: 1s;
  
 }
 
+#panelOfChoices > div > img:hover{
+  box-shadow: 10px 10px grey;
+}
+/* END PANELS */
+
+/* ASIDE STUFF */
 #aside {
   width: 30%;
   height: 40%;
@@ -87,12 +104,16 @@ nav > ul > li > a {
   border-top-left-radius: 5px;
   font-weight: bolder;
 }
+/* END ASIDE */
 
 footer {
   text-align: center;
   background-color: #EA502B;
+  font-size: 1.1em;
+  font-weight: bold;
 
 }
+
 /*resize the pie chart*/
 #results {
   width: 80%;
