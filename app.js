@@ -30,35 +30,62 @@ var MarketingItem = function (name, imageSrc) {
 //hold all marketing items after being constructed
 MarketingItem.allImages = [];
 
-var displayResults = function () {
-  //header description
-  // eslint-disable-next-line no-undef
-  htmlTextHack('li', 'name, clicks, shown', 'clickData');
-  //iterate over objects
-  for (var i = 0; i < MarketingItem.allImages.length ; i++ ) {
-    var name = MarketingItem.allImages[i].name;
-    var clicks = MarketingItem.allImages[i].clicks;
-    var shown = MarketingItem.allImages[i].timesShown;
-    //create output
-    var output = name + ', ' + clicks + ', ' + shown;
-    // eslint-disable-next-line no-undef
-    htmlTextHack('li', output, 'clickData');
+//chart creation
+function makeChart(id) {
+  var chartId = document.getElementById(id);
+  var percents = [];
+  var names = [];
+  var colors = [];
+  var borders = [];
+
+  for (var i = 0; i < MarketingItem.allImages.length; i++) {
+    //create percentage
+    var p = Math.round(MarketingItem.allImages[i].clicks / MarketingItem.allImages[i].timesShown * 100);
+    //divide by zero, set to 0
+    if ( isNaN(p) ){
+      p = 0;
+    }
+    console.log('P: ', p);
+    //save names and percents and colors
+    percents.push( p );
+    names.push( MarketingItem.allImages[i].name );
+    colors.push( random_rgba() );
+    borders.push( random_rgba() );
   }
-};
-// //END HTML WRITE CODE
+
+  var chartData = {
+    labels: names,
+    datasets: [{
+      label: '# of Votes',
+      data: percents,
+      backgroundColor: colors,
+      borderColor: borders,
+      borderWidth: 5
+    }]
+  };//end chartData
+  var chartObject = {
+    type: 'doughnut',
+    data : chartData,
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      scales: {
+        yAxes: [{
+          ticks: {
+            beginAtZero: true
+          }
+        }]
+      }
+    }
+  };//end chartObject
+  var busChart = new Chart(chartId, chartObject);
+}//end CHART
 
 //render three new images from the url
 var renderNewImage = function (leftIndex, centerIndex, rightIndex){
   leftImageTag.src = MarketingItem.allImages[leftIndex].url;
   centerImageTag.src = MarketingItem.allImages[centerIndex].url;
   rightImageTag.src = MarketingItem.allImages[rightIndex].url;
-};
-
-//from MDN, inclusive range with uniform distribution
-var getRandomInt = function(min, max) {
-  min = Math.ceil(min);
-  max = Math.floor(max);
-  return Math.floor(Math.random() * (max - min + 1)) + min;
 };
 
 //check values against previous values in last panel.
@@ -118,19 +145,24 @@ var handleClickOnMarketing = function(event){
       leftImageOnPage.timesShown++;
       centerImageOnPage.timesShown++;
       rightImageOnPage.timesShown++;
-      //choose new merchendise
+      //choose new pictures
       pickItemFromArray();
     }
   }//end total clicks check
 
+  //TODO: add an else here to remove the event listener and display results.  maybe keep generating a new model each time?
   // increment amount of clicks
   totalClicks++;
   //when they reach total max clicks, remove the event listener
   if(totalClicks === allowedClicks){
     panelSectionTag.removeEventListener('click', handleClickOnMarketing);
+
     //TODO: add a innerhtml to empty string here to reset.
+
     //call our function to display results here
-    displayResults();
+    //displayResults();
+    makeChart('myChart');
+
   }
 };
 
@@ -162,3 +194,5 @@ new MarketingItem('wine-glass', './assets/wine-glass.jpg');
 
 //initial call to populate panels
 pickItemFromArray();
+
+
