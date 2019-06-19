@@ -1,5 +1,6 @@
+//JDK : library for random numbers of various types
+/* eslint-disable no-unused-vars */
 'use strict';
-//library for random numbers of various types
 
 // from MDN
 // inclusive range with uniform distribution

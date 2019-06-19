@@ -30,6 +30,36 @@ var MarketingItem = function (name, imageSrc) {
 //hold all marketing items after being constructed
 MarketingItem.allImages = [];
 
+
+
+//check local storage for existing data, create empty if not.
+if ( returnFromLocal('clickarray') === null || returnFromLocal('seenarray') === null){
+  //local storage does not exist
+  var localStorageExists = false;
+  var clickarray = [];
+  var seenarray = [];
+} else {
+  //local storage exists
+  var localStorageExists = true;
+  //grab from local storage, arrays
+  var clickarray = returnFromLocal('clickarray');
+  var seenarray = returnFromLocal('seenarray');
+}
+
+//a function to save and update local storage
+function saveAndUpdate() {
+  for (var y = 0 ; y < MarketingItem.allImages.length ; y ++ ){
+    if (localStorageExists){
+      clickarray[y] += MarketingItem.allImages[y].clicks;
+      seenarray[y] += MarketingItem.allImages[y].timesShown;
+    } else {
+      //if local storage doesnt exist, push into empty storage array
+      clickarray.push( MarketingItem.allImages[y].clicks );
+      seenarray.push( MarketingItem.allImages[y].timesShown );
+    }
+  }
+}
+
 //chart creation
 function makeChart(id) {
   var chartId = document.getElementById(id);
@@ -37,21 +67,23 @@ function makeChart(id) {
   var names = [];
   var colors = [];
   var borders = [];
+  
+  //update to local storage
+  saveAndUpdate();
 
   for (var i = 0; i < MarketingItem.allImages.length; i++) {
-    //create percentage
-    var p = Math.round(MarketingItem.allImages[i].clicks / MarketingItem.allImages[i].timesShown * 100);
-    //divide by zero, set to 0
+    //create percentage from current + old data
+    var p = Math.round(clickarray[i] / seenarray[i] * 100);
+    //if divide by zero, set p to 0
     if ( isNaN(p) ){
       p = 0;
     }
-    console.log('P: ', p);
     //save names and percents and colors
     percents.push( p );
     names.push( MarketingItem.allImages[i].name );
     colors.push( random_rgba() );
     borders.push( random_rgba() );
-  }
+  }//end for
 
   var chartData = {
     labels: names,
@@ -157,11 +189,14 @@ var handleClickOnMarketing = function(event){
   if(totalClicks === allowedClicks){
     panelSectionTag.removeEventListener('click', handleClickOnMarketing);
 
-    //TODO: add a innerhtml to empty string here to reset.
+    //TODO: add a innerhtml to empty string here to reset, if needed later.
 
     //call our function to display results here
-    //displayResults();
     makeChart('myChart');
+
+    //store arrays of clicks and seen into local storage
+    storeInLocal('clickarray', clickarray);
+    storeInLocal('seenarray', seenarray);
 
   }
 };

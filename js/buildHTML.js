@@ -1,5 +1,7 @@
+//JDK: Library for writing HTML code into various nodes.
+/* eslint-disable no-unused-vars */
 'use strict';
-//Jack Daniel Kinne - Library for writing HTML code into various nodes.
+
 // Referencing the container for the DOM
 function domReferenceParent(parent){
   var node = document.getElementById(parent);
